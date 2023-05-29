@@ -33,5 +33,25 @@ namespace UDP_Server
         {
             Th.Abort(); //關閉執行緒
         }
+
+        //監聽副程序
+        private void Listen()
+        {
+            UdpClient U = new UdpClient(2019);
+
+            while (true)
+            {
+                IPEndPoint EP = new IPEndPoint(IPAddress.Any, 2019);
+                byte[] B = U.Receive(ref EP);   //訊息到達時讀取資訊到B[]
+                string A = Encoding.Default.GetString(B);   //翻譯B陣列為字串A
+                string M = "Unknow Command";
+                if(A == "Time?")
+                {
+                    M = DateTime.Now.ToString();
+                }
+                B = Encoding.Default.GetBytes(M);
+                U.Send(B, B.Length, EP);    //回應詢問資料(循原路回去)
+            }
+        }
     }
 }
